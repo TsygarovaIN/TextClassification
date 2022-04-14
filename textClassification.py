@@ -1,4 +1,8 @@
+import pandas as pd
+import numpy as np
 import tensorflow as tf
+from collections import Counter
+from sklearn.datasets import fetch_20newsgroups
 
 my_graph = tf.Graph()
 with tf.Session(graph=my_graph) as sess:
@@ -191,3 +195,24 @@ with tf.Session() as sess:
     # [NEW] Save the variables to disk
     save_path = saver.save(sess, "/tmp/model.ckpt")
     print("Model saved in path: %s" % save_path)
+    
+# Get a text to make a prediction
+text_for_prediction = newsgroups_test.data[5]
+print('text',text_for_prediction)
+
+print("Text correct category:", newsgroups_test.target[5])
+
+# Convert text to vector so we can send it to our model
+vector_txt = text_to_vector(text)
+# Wrap vector like we do in get_batches()
+input_array = np.array([vector_txt])
+input_array.shape
+saver = tf.train.Saver()
+
+with tf.Session() as sess:
+    saver.restore(sess, "/tmp/model.ckpt")
+    print("Model restored.")
+    
+    classification = sess.run(tf.argmax(prediction, 1), feed_dict={input_tensor: input_array})
+    print("Predicted category:", classification)
+
