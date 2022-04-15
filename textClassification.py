@@ -215,4 +215,16 @@ with tf.Session() as sess:
     
     classification = sess.run(tf.argmax(prediction, 1), feed_dict={input_tensor: input_array})
     print("Predicted category:", classification)
+# Get 10 texts to make a prediction
 
+x_10_texts,y_10_correct_labels = get_batch(newsgroups_test,0,10)
+
+saver = tf.train.Saver()
+
+with tf.Session() as sess:
+    saver.restore(sess, "/tmp/model.ckpt")
+    print("Model restored.")
+    
+    classification = sess.run(tf.argmax(prediction, 1), feed_dict={input_tensor: x_10_texts})
+    print("Predicted categories:", classification)
+    print("Correct categories:", np.argmax(y_10_correct_labels, 1))
